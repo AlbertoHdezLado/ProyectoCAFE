@@ -2,7 +2,7 @@ package Tasks;
 
 import Utils.Slot;
 
-public class Translator { // Por hacer
+public class Translator {
 
     Slot inputSlot;
     Slot outputSlot;

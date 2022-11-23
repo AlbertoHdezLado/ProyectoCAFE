@@ -4,7 +4,7 @@ import Utils.Slot;
 
 import java.util.List;
 
-public class Merger {
+public class Merger { //Por comprobar
 
     List<Slot> inputSlotList;
     Slot outputSlot;
@@ -16,7 +16,7 @@ public class Merger {
 
     public void Merge() {
         int i = 0;
-        while (!inputSlotList.isEmpty()) { // Esta condición está mal si queremos hacerlo concurrente
+        while (!inputSlotList.isEmpty()) {
             if (!inputSlotList.get(i%inputSlotList.size()).getQueue().isEmpty()) {
                 outputSlot.enqueue(inputSlotList.get(i%inputSlotList.size()).dequeue());
                 i++;

@@ -1,3 +1,4 @@
+import Tasks.Aggregator;
 import Tasks.Splitter;
 import Utils.Slot;
 import com.sun.jdi.PathSearchingVirtualMachine;
@@ -17,6 +18,7 @@ public class Cafe {
 
     public Cafe() {
         Slot entrada = new Slot();
+        Slot intermedio = new Slot();
         Slot salida = new Slot();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = null;
@@ -24,11 +26,13 @@ public class Cafe {
             builder = factory.newDocumentBuilder();
             Document documento = builder.parse(new File("src/order2.xml"));
             entrada.enqueue(documento);
-            Splitter splitter = new Splitter(entrada, salida, "//drink");
+            System.out.println("Separando: ");
+            Splitter splitter = new Splitter(entrada, intermedio, "//drink");
             splitter.Split();
-            for (int i = 0;i < salida.getQueue().size();i++) {
-                System.out.println(salida.dequeue());
-            }
+            System.out.println("Juntando: ");
+            Aggregator aggregator = new Aggregator(intermedio, salida, "//drink");
+            aggregator.Aggregate();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

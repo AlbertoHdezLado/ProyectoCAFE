@@ -9,7 +9,7 @@ import Utils.Slot;
 
 import java.util.List;
 
-public class Replicator {
+public class Replicator { // Por comprobar
 
     Slot inputSlot;
     List<Slot> outputSlotList;
@@ -21,7 +21,7 @@ public class Replicator {
 
     public void Replicate() {
         int i = 0;
-        while (!inputSlot.getQueue().isEmpty()) // Esta condición está mal si queremos hacerlo concurrente
+        while (!inputSlot.getQueue().isEmpty())
                 outputSlotList.get(i++%outputSlotList.size()).enqueue(inputSlot.dequeue());
     }
 }

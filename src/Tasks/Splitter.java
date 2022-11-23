@@ -27,7 +27,7 @@ public class Splitter { //Comprobado
     }
 
     public int Split() {
-        int numSplitDocuments = 0;
+        int nSegmentos = 0;
         // Desencolamos el documento del slot de entrada
         Document inputDocument = inputSlot.dequeue();
         try {
@@ -37,15 +37,15 @@ public class Splitter { //Comprobado
             NodeList splitNodes = (NodeList) xPath.evaluate(xPathExpression, inputDocument, XPathConstants.NODESET);
 
             // Mostramos numero de elementos encontrados
-            numSplitDocuments = splitNodes.getLength();
-            System.out.println("Found " + numSplitDocuments + " elements:");
+            nSegmentos = splitNodes.getLength();
+            System.out.println("Found " + nSegmentos + " elements:");
 
             // Builder para cargar el documento
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = dbFactory.newDocumentBuilder();
 
             // Por cada uno de los elementos encontrados
-            for (int i = 0; i < numSplitDocuments; i++) {
+            for (int i = 0; i < nSegmentos; i++) {
                 // Creamos un documento
                 Document splitDocument = builder.newDocument();
 
@@ -81,7 +81,7 @@ public class Splitter { //Comprobado
         } catch (XPathExpressionException | ParserConfigurationException ex) {
             Logger.getLogger(Splitter.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return numSplitDocuments;
+        return nSegmentos;
     }
 
     // Método para darle formato al XML al mostrarlo en la consola

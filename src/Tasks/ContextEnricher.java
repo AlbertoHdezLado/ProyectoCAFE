@@ -1,8 +1,8 @@
 /*package Tasks;
 
-public class Enricher {
+public class ContextEnricher {
 
-    public Enricher() {
+    public ContextEnricher() {
 
     }
 
