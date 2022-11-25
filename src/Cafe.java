@@ -1,8 +1,11 @@
 import Tasks.Aggregator;
 import Tasks.Distributor;
+import Tasks.Replicator;
 import Tasks.Splitter;
 import Utils.Slot;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
@@ -34,7 +37,12 @@ public class Cafe {
             builder = factory.newDocumentBuilder();
             Document documento = builder.parse(new File("src/order2.xml"));
             entrada.enqueue(documento);
-            System.out.println("Separando: ");
+            printXmlDocument(documento);
+            salida.add(s1);
+            Replicator replicator = new Replicator(entrada,salida);
+            replicator.Replicate();
+            printXmlDocument(salida.get(0).dequeue());
+            /*System.out.println("Separando: ");
             Splitter splitter = new Splitter(entrada, s1, "//drink");
             splitter.SplitRemovingInputQueue();
             System.out.println("Juntando: ");
@@ -42,7 +50,7 @@ public class Cafe {
             aggregator.Aggregate();
             System.out.println("Separando por tipo: ");
             Distributor distributor = new Distributor(s2, salida, criteriaList);
-            distributor.Distribute();
+            distributor.Distribute();*/
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -6,8 +6,16 @@
 package Tasks;
 
 import Utils.Slot;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.util.List;
+import java.util.UUID;
 
 public class Replicator { // Por comprobar
 
@@ -19,9 +27,22 @@ public class Replicator { // Por comprobar
         this.outputSlotList = outputSlotList;
     }
 
-    public void Replicate() {
-        int i = 0;
-        while (!inputSlot.getQueue().isEmpty())
-                outputSlotList.get(i++%outputSlotList.size()).enqueue(inputSlot.dequeue());
+    public String Replicate() {
+        //Creamos un ID único que necesitaremos para el correlator
+        String uniqueID = UUID.randomUUID().toString();
+        while (!inputSlot.getQueue().isEmpty()) {
+            Document inputDocument = inputSlot.dequeue();
+
+            // Añadimos el ID
+            Element root = inputDocument.getDocumentElement();
+            Element idElement = inputDocument.createElement("replicator_id");
+            idElement.setTextContent(uniqueID);
+            root.appendChild(idElement);
+
+            for (int i = 0; i < outputSlotList.size(); i++)
+                outputSlotList.get(i).enqueue(inputDocument);
+        }
+
+        return uniqueID;
     }
 }

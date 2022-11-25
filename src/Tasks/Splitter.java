@@ -27,9 +27,8 @@ public class Splitter { //Comprobado
     }
 
     public void SplitRemovingInputQueue() {
-        int nSegmentos = 0;
         // Desencolamos el documento del slot de entrada
-        if (!inputSlot.getQueue().isEmpty()) {
+        while (!inputSlot.getQueue().isEmpty()) {
             Document inputDocument = inputSlot.dequeue();
             Split(inputDocument);
         }
@@ -37,7 +36,7 @@ public class Splitter { //Comprobado
 
     public void SplitWithoutRemovingInputQueue() {
         // Desencolamos el documento del slot de entrada
-        if (!inputSlot.getQueue().isEmpty()) {
+        while (!inputSlot.getQueue().isEmpty()) {
             Document inputDocument = inputSlot.getQueue().element();
             Split(inputDocument);
         }
