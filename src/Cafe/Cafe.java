@@ -25,6 +25,9 @@ public class Cafe {
         Slot slot4 = new Slot();
         Slot slot5 = new Slot();
         Slot slot6 = new Slot();
+        Slot slot7 = new Slot();
+        Slot slot8 = new Slot();
+
         List<Slot> slotList1 = new LinkedList<>();
         List<Slot> slotList2 = new LinkedList<>();
         List<Slot> slotList3 = new LinkedList<>();
@@ -53,18 +56,15 @@ public class Cafe {
             Replicator replicatorCold = new Replicator(slotList1.get(1), slotList3);
             replicatorCold.Replicate();
 
-            Translator translatorHot = new Translator(slotList2.get(0),"//drink/name");
-            Translator translatorCold = new Translator(slotList3.get(0),"//drink/name");
+            Translator translatorHot = new Translator(slotList2.get(0), slot7,"//drink/name");
+            Translator translatorCold = new Translator(slotList3.get(0), slot8,"//drink/name");
 
-            Queue<String> queryListHot = translatorHot.TranslateSQL("Nombre", "dbo.BEBIDAS_CALIENTES", "and stock>0");
-            Queue<String> queryListCold = translatorCold.TranslateSQL("Nombre", "dbo.BEBIDAS_FRIAS", "and stock>0");
+            translatorHot.TranslateSQL("Nombre", "dbo.BEBIDAS_CALIENTES", "and stock>0");
+            translatorCold.TranslateSQL("Nombre", "dbo.BEBIDAS_FRIAS", "and stock>0");
 
-
-
-
-
-
-
+            printXmlDocument(slot7.dequeue());
+            printXmlDocument(slot7.dequeue());
+            printXmlDocument(slot8.dequeue());
         } catch (Exception e) {
             e.printStackTrace();
         }
