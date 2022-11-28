@@ -1,4 +1,4 @@
-/*package Tasks;
+package Tasks;
 
 import Utils.Slot;
 
@@ -15,4 +15,4 @@ public class Translator {
     public void Translate() {
 
     }
-}*/
+}
