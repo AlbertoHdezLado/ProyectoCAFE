@@ -26,23 +26,10 @@ public class Splitter { //Comprobado
         this.xPathExpression = xPathExpression;
     }
 
-    public void SplitRemovingInputQueue() {
+    public void Split() {
         // Desencolamos el documento del slot de entrada
         while (!inputSlot.getQueue().isEmpty()) {
             Document inputDocument = inputSlot.dequeue();
-            Split(inputDocument);
-        }
-    }
-
-    public void SplitWithoutRemovingInputQueue() {
-        // Desencolamos el documento del slot de entrada
-        while (!inputSlot.getQueue().isEmpty()) {
-            Document inputDocument = inputSlot.getQueue().element();
-            Split(inputDocument);
-        }
-    }
-
-    public void Split(Document inputDocument) {
             try {
                 int nSegmentos = 0;
                 // Consulta xPath para extraer una lista de todos los nodos y otra de los elementos que queremos separar.
@@ -52,7 +39,6 @@ public class Splitter { //Comprobado
 
                 // Mostramos numero de elementos encontrados
                 nSegmentos = splitNodes.getLength();
-                System.out.println("Found " + nSegmentos + " elements:");
 
                 // Builder para cargar el documento
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -87,7 +73,7 @@ public class Splitter { //Comprobado
                     }
 
                     // Mostramos el XML
-                    printXmlDocument(splitDocument);
+                    // printXmlDocument(splitDocument);
 
                     // Encolamos el documento resultante en el slot de salida
                     outputSlot.enqueue(splitDocument);
@@ -95,16 +81,7 @@ public class Splitter { //Comprobado
             } catch (XPathExpressionException | ParserConfigurationException ex) {
                 Logger.getLogger(Splitter.class.getName()).log(Level.SEVERE, null, ex);
 
+            }
         }
-    }
-
-    // Método para darle formato al XML al mostrarlo en la consola
-    public static void printXmlDocument(Document document) {
-        DOMImplementationLS domImplementationLS =
-                (DOMImplementationLS) document.getImplementation();
-        LSSerializer lsSerializer =
-                domImplementationLS.createLSSerializer();
-        String string = lsSerializer.writeToString(document);
-        System.out.println(string);
     }
 }
