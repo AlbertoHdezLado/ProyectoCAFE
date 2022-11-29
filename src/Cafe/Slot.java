@@ -1,4 +1,4 @@
-package Utils;
+package Cafe;
 
 import java.util.LinkedList;
 import java.util.Queue;

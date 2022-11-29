@@ -1,6 +1,6 @@
 package Tasks;
 
-import Utils.Slot;
+import Cafe.Slot;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -10,9 +10,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class Translator {
 
@@ -27,17 +24,14 @@ public class Translator {
     }
 
     public void TranslateSQL(String variable, String TableName, String otherConditions) {
-        Queue<String> BDQueryStringList = new LinkedList<>();
+        XPath xPath = XPathFactory.newInstance().newXPath();
         while (!inputSlot.getQueue().isEmpty()) {
             Document inputDocument = inputSlot.dequeue();
             try {
                 // Consulta xPath para extraer una lista de elementos encontrados.
-                XPath xPath = XPathFactory.newInstance().newXPath();
                 NodeList node = (NodeList) xPath.evaluate(xPathExpression, inputDocument, XPathConstants.NODESET);
 
                 String element = node.item(0).getTextContent();
-
-
 
                 // Builder para cargar el documento
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -46,9 +40,18 @@ public class Translator {
                 // Creamos un documento
                 Document translatedDocument = builder.newDocument();
 
-                // Añadimos el nodo sql
+                // Creamos el nodo sql
                 Element sqlElement = translatedDocument.createElement("sql");
                 sqlElement.setTextContent("select * from " + TableName + " where " + variable + "='" + element + "' " + otherConditions);
+
+                // Le añadimos el replicator id si tiene
+                NodeList replicatorIDNode = (NodeList) xPath.evaluate("//replicator_id", inputDocument, XPathConstants.NODESET);
+                if (replicatorIDNode.getLength() > 0) {
+                    sqlElement.setAttribute("replicator_id", replicatorIDNode.item(0).getTextContent());
+                }
+
+
+                // Añadimos el nodo sql
                 translatedDocument.appendChild(sqlElement);
 
                 outputSlot.enqueue(translatedDocument);

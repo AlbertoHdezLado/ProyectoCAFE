@@ -1,7 +1,10 @@
 package Cafe;
 
-import Tasks.*;
-import Utils.Slot;
+import DB.ConectorDB;
+import Tasks.Distributor;
+import Tasks.Replicator;
+import Tasks.Splitter;
+import Tasks.Translator;
 import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
@@ -11,7 +14,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 public class Cafe {
     public static void main(String[] args) {
@@ -27,6 +29,8 @@ public class Cafe {
         Slot slot6 = new Slot();
         Slot slot7 = new Slot();
         Slot slot8 = new Slot();
+        Slot slot9 = new Slot();
+        Slot slot10 = new Slot();
 
         List<Slot> slotList1 = new LinkedList<>();
         List<Slot> slotList2 = new LinkedList<>();
@@ -36,7 +40,7 @@ public class Cafe {
         DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
-            Document documento = builder.parse(new File("src/order2.xml"));
+            Document documento = builder.parse(new File("src/Orders/order2.xml"));
 
             slot1.enqueue(documento);
 
@@ -58,13 +62,19 @@ public class Cafe {
 
             Translator translatorHot = new Translator(slotList2.get(0), slot7,"//drink/name");
             Translator translatorCold = new Translator(slotList3.get(0), slot8,"//drink/name");
-
             translatorHot.TranslateSQL("Nombre", "dbo.BEBIDAS_CALIENTES", "and stock>0");
             translatorCold.TranslateSQL("Nombre", "dbo.BEBIDAS_FRIAS", "and stock>0");
 
-            printXmlDocument(slot7.dequeue());
-            printXmlDocument(slot7.dequeue());
-            printXmlDocument(slot8.dequeue());
+            ConectorDB conectordbhot = new ConectorDB(slot7, slot9);
+            ConectorDB conectordbcold = new ConectorDB(slot8, slot10);
+
+            conectordbhot.Conect();
+            conectordbcold.Conect();
+
+            printXmlDocument(slot9.dequeue());
+            printXmlDocument(slot9.dequeue());
+            printXmlDocument(slot10.dequeue());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
