@@ -1,10 +1,7 @@
 package Cafe;
 
 import DB.ConectorDB;
-import Tasks.Distributor;
-import Tasks.Replicator;
-import Tasks.Splitter;
-import Tasks.Translator;
+import Tasks.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
@@ -31,10 +28,18 @@ public class Cafe {
         Slot slot8 = new Slot();
         Slot slot9 = new Slot();
         Slot slot10 = new Slot();
+        Slot slot11 = new Slot();
+        Slot slot12 = new Slot();
+        Slot slot13 = new Slot();
+        Slot slot14 = new Slot();
 
         List<Slot> slotList1 = new LinkedList<>();
         List<Slot> slotList2 = new LinkedList<>();
         List<Slot> slotList3 = new LinkedList<>();
+        List<Slot> slotList4 = new LinkedList<>();
+        List<Slot> slotList5 = new LinkedList<>();
+        List<Slot> slotList6 = new LinkedList<>();
+        List<Slot> slotList7 = new LinkedList<>();
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
@@ -71,9 +76,34 @@ public class Cafe {
             conectordbhot.Conect();
             conectordbcold.Conect();
 
-            printXmlDocument(slot9.dequeue());
-            printXmlDocument(slot9.dequeue());
-            printXmlDocument(slot10.dequeue());
+            // Entrada correlatorHot
+            slotList4.add(slotList2.get(1));
+            slotList4.add(slot9);
+
+            // Entrada correlatorCold
+            slotList5.add(slotList3.get(1));
+            slotList5.add(slot10);
+
+            // Salida correlatorHot
+            slotList6.add(slot11);
+            slotList6.add(slot12);
+
+            // Salida correlatorCold
+            slotList7.add(slot13);
+            slotList7.add(slot14);
+
+            Correlator correlatorHot = new Correlator(slotList4, slotList6);
+            Correlator correlatorCold = new Correlator(slotList5, slotList7);
+            correlatorHot.Correlate();
+            correlatorCold.Correlate();
+
+            printXmlDocument(slotList6.get(0).dequeue());
+            printXmlDocument(slotList6.get(1).dequeue());
+            printXmlDocument(slotList6.get(0).dequeue());
+            printXmlDocument(slotList6.get(1).dequeue());
+            printXmlDocument(slotList7.get(0).dequeue());
+            printXmlDocument(slotList7.get(1).dequeue());
+
 
         } catch (Exception e) {
             e.printStackTrace();
