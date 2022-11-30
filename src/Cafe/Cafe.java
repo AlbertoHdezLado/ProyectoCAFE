@@ -32,6 +32,8 @@ public class Cafe {
         Slot slot12 = new Slot();
         Slot slot13 = new Slot();
         Slot slot14 = new Slot();
+        Slot slot15 = new Slot();
+        Slot slot16 = new Slot();
 
         List<Slot> slotList1 = new LinkedList<>();
         List<Slot> slotList2 = new LinkedList<>();
@@ -97,13 +99,15 @@ public class Cafe {
             correlatorHot.Correlate();
             correlatorCold.Correlate();
 
-            printXmlDocument(slotList6.get(0).dequeue());
-            printXmlDocument(slotList6.get(1).dequeue());
-            printXmlDocument(slotList6.get(0).dequeue());
-            printXmlDocument(slotList6.get(1).dequeue());
-            printXmlDocument(slotList7.get(0).dequeue());
-            printXmlDocument(slotList7.get(1).dequeue());
+            printXmlDocument(slotList6.get(0).getQueue().element());
+            printXmlDocument(slotList6.get(1).getQueue().element());
 
+            ContextEnricher contextEnricherHot = new ContextEnricher(slotList6.get(0), slotList6.get(1), slot15, "//drink[1]", "//resultSet/file[1]");
+            ContextEnricher contextEnricherCold = new ContextEnricher(slotList7.get(0), slotList7.get(1), slot16, "//drink[1]", "//resultSet/file[1]");
+            contextEnricherHot.Enrich();
+            contextEnricherCold.Enrich();
+
+            printXmlDocument(slot15.dequeue());
 
         } catch (Exception e) {
             e.printStackTrace();

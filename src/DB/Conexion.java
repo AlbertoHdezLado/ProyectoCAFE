@@ -82,6 +82,24 @@ public class Conexion {
         return true;
     }
 
+    public boolean realizarConsulta(String sqlQuery) throws SQLException {
+        ps=conn.prepareStatement(sqlQuery);
+        ResultSet res=ps.executeQuery();
+        String nombre=res.getString("Nombre");
+        int stock=res.getInt("Stock");
+        stock--;
+        String []nombreTabla= toString().split(" ");
+        String nombreTa=nombreTabla[3];
+        boolean existe=res.next();
+        ps.close();
+        if(existe){
+            ps=conn.prepareStatement("UPDATE" +nombreTa+ "SET" +stock+ "where Nombre="+nombre);
+            ps.executeUpdate();
+            ps.close();
+            return true;
+        }
+        return false;
+    }
     /**
      Devuelve la propiedad Connection
      @return conn

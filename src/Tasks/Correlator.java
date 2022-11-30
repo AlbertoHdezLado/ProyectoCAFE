@@ -23,30 +23,32 @@ public class Correlator {
     public void Correlate() {
         // Mínimo dos entradas
         try {
-            Boolean found, foundAllSlots;
+            boolean found, foundAllSlots = true;
             int i = 0;
             XPath xPath = XPathFactory.newInstance().newXPath();
             while (i < inputSlotList.get(0).getQueue().size()) {
                 Document inputDocument = inputSlotList.get(0).dequeue();
                 NodeList replicatorIDNode = (NodeList) xPath.evaluate("//replicator_id", inputDocument, XPathConstants.NODESET);
                 String replicatorID = replicatorIDNode.item(0).getTextContent();
-
                 int j = 1;
-                found = false;
-                foundAllSlots = true;
-                while (j < inputSlotList.size() && !found) {
-                    Document comparedDocument = inputSlotList.get(j).dequeue();
-                    NodeList comparedIDNode = (NodeList) xPath.evaluate("//replicator_id", comparedDocument, XPathConstants.NODESET);
-                    String comparedID = comparedIDNode.item(0).getTextContent();
-                    if (replicatorID.equals(comparedID)) {
-                        found = true;
+                // Comprobamos si todos los slot de entrada tienen un documento con el replicator id
+                while (j < inputSlotList.size()) {
+                    int documentPos = 0;
+                    found = false;
+                    while (documentPos < inputSlotList.get(j).getQueue().size() && !found) {
+                        Document comparedDocument = inputSlotList.get(j).dequeue();
+                        NodeList comparedIDNode = (NodeList) xPath.evaluate("//replicator_id", comparedDocument, XPathConstants.NODESET);
+                        String comparedID = comparedIDNode.item(0).getTextContent();
+                        if (replicatorID.equals(comparedID))
+                            found = true;
+                        documentPos++;
+                        inputSlotList.get(j).enqueue(comparedDocument);
                     }
-                    else {
-                        foundAllSlots = false;
-                    }
-                    inputSlotList.get(j).enqueue(comparedDocument);
+                    if (!found) foundAllSlots = false;
                     j++;
                 }
+
+                // En el caso de que todos los slot tienen un documento con el id deseado, los sacamos al mismo tiempo por la salida
                 if (foundAllSlots) {
                     outputSlotList.get(0).enqueue(inputDocument);
                     for (int k = 1; k < inputSlotList.size(); k++) {
@@ -55,13 +57,15 @@ public class Correlator {
                         while (!found && l < inputSlotList.get(k).getQueue().size() ) {
                             Document aux = inputSlotList.get(k).dequeue();
                             NodeList auxIDNode = (NodeList) xPath.evaluate("//replicator_id", aux, XPathConstants.NODESET);
-                            String comparedID = auxIDNode.item(0).getTextContent();
-                            if (replicatorID.equals(comparedID)) {
+                            String auxID = auxIDNode.item(0).getTextContent();
+                            if (replicatorID.equals(auxID)) {
                                 outputSlotList.get(k).enqueue(aux);
                                 found = true;
                             }
-                            else
-                            l++;
+                            else {
+                                inputSlotList.get(k).enqueue(aux);
+                                l++;
+                            }
                         }
                     }
                 }
