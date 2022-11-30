@@ -78,7 +78,6 @@ public class Correlator {
                                 NodeList nodeListChild2 = nodeList2.item(0).getChildNodes();
                                 for (int nodePos = nodeListChild2.getLength()-1; nodePos>=0 ; nodePos--) {
                                     Node node = nodeListChild2.item(nodePos);
-                                    System.out.println(node.getNodeName());
                                     if (node.getNodeName().equals("replicator_id"))
                                         node.getParentNode().removeChild(node);
                                 }

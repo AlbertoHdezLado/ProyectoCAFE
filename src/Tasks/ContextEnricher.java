@@ -3,6 +3,7 @@ package Tasks;
 import Cafe.Slot;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -20,15 +21,13 @@ public class ContextEnricher {
     Slot inputSlot;
     Slot contextSlot;
     Slot outputSlot;
-    String xPathExpressionInput;
-    String xPathExpressionContext;
+    String xPathExpression;
 
-    public ContextEnricher(Slot input, Slot context, Slot output, String xPathExpressionInput, String xPathExpressionContext) {
+    public ContextEnricher(Slot input, Slot context, Slot output, String xPathExpression) {
         this.inputSlot = input;
         this.contextSlot = context;
         this.outputSlot = output;
-        this.xPathExpressionInput = xPathExpressionInput;
-        this.xPathExpressionContext = xPathExpressionContext;
+        this.xPathExpression = xPathExpression;
     }
 
     public void Enrich() {
@@ -41,10 +40,9 @@ public class ContextEnricher {
             try {
                 // Consulta xPath para extraer una lista de elementos encontrados.
                 NodeList rootNode = (NodeList) xPath.evaluate("/*", inputDocument, XPathConstants.NODESET);
-                NodeList inputNode = (NodeList) xPath.evaluate(xPathExpressionInput, inputDocument, XPathConstants.NODESET);
-                NodeList contextNode = (NodeList) xPath.evaluate(xPathExpressionContext, contextDocument, XPathConstants.NODESET);
+                NodeList inputNode = (NodeList) xPath.evaluate(xPathExpression, inputDocument, XPathConstants.NODESET);
+                NodeList contextNode = (NodeList) xPath.evaluate("/*", contextDocument, XPathConstants.NODESET);
 
-                NodeList rootNodeChilds = rootNode.item(0).getChildNodes();
                 NodeList inputNodeChilds = inputNode.item(0).getChildNodes();
                 NodeList contextNodeChilds = contextNode.item(0).getChildNodes();
 
@@ -55,30 +53,22 @@ public class ContextEnricher {
                 // Creamos un documento
                 Document enrichedDocument = builder.newDocument();
 
-                System.out.println(inputNodeChilds.getLength());
-                System.out.println(contextNodeChilds.getLength());
-
-                for (int i = 0; i < contextNodeChilds.getLength(); i++) {
-                    System.out.println("a");
-                    int j = 0;
+                for (int contextNodePos = 0; contextNodePos < contextNodeChilds.getLength(); contextNodePos++) {
+                    Node node = contextNodeChilds.item(contextNodePos);
                     boolean found = false;
-                    while (j < inputNodeChilds.getLength() && !found) {
-                        if (inputNodeChilds.item(j).getNodeName().equals(contextNodeChilds.item(i).getNodeName())) {
+                    int inputNodePos = 0;
+                    while (inputNodePos < inputNodeChilds.getLength() && !found) {
+                        if (node.getNodeName().equals(inputNodeChilds.item(inputNodePos).getNodeName()))
                             found = true;
-                        }
-                        else {
-                            j++;
-                        }
+                        else
+                            inputNodePos++;
                     }
+
                     if (!found) {
-                        element = enrichedDocument.createElement(contextNodeChilds.item(i).getNodeName());
-                        element.setTextContent(contextNodeChilds.item(i).getTextContent());
+                        Element newElement = inputDocument.createElement(node.getNodeName());
+                        newElement.setTextContent(node.getTextContent());
+                        inputNode.item(0).appendChild(newElement);
                     }
-                    else {
-                        element = enrichedDocument.createElement(inputNodeChilds.item(j).getNodeName());
-                        element.setTextContent(inputNodeChilds.item(i).getTextContent());
-                    }
-                    enrichedDocument.appendChild(element);
                 }
 
                 outputSlot.enqueue(inputDocument);

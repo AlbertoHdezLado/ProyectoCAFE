@@ -53,9 +53,9 @@ public class ConectorDB {
 
                 //if(con.realizarConsulta(sqlQuery)){
                     resultElement.setTextContent("true");
-                //}else{
-                    //resultElement.setTextContent("false");
-                //}
+                /*}else{
+                    resultElement.setTextContent("false");
+                }*/
 
                 reponseDocument.appendChild(resultSetElement);
                 resultSetElement.appendChild(nameElement);

@@ -99,22 +99,14 @@ public class Cafe {
             correlatorHot.Correlate();
             correlatorCold.Correlate();
 
-            printXmlDocument(slotList6.get(0).getQueue().element());
-            printXmlDocument(slotList6.get(1).getQueue().element());
-            printXmlDocument(slotList6.get(0).getQueue().element());
-            printXmlDocument(slotList6.get(1).getQueue().element());
-            printXmlDocument(slotList7.get(0).getQueue().element());
-            printXmlDocument(slotList7.get(1).getQueue().element());
-
-            /*
-            ContextEnricher contextEnricherHot = new ContextEnricher(slotList6.get(0), slotList6.get(1), slot15, "//drink[1]", "//resultSet/file[1]");
-            ContextEnricher contextEnricherCold = new ContextEnricher(slotList7.get(0), slotList7.get(1), slot16, "//drink[1]", "//resultSet/file[1]");
+            ContextEnricher contextEnricherHot = new ContextEnricher(slotList6.get(0), slotList6.get(1), slot15, "//drink[1]");
+            ContextEnricher contextEnricherCold = new ContextEnricher(slotList7.get(0), slotList7.get(1), slot16, "//drink[1]");
             contextEnricherHot.Enrich();
             contextEnricherCold.Enrich();
 
             printXmlDocument(slot15.dequeue());
-
-            */
+            printXmlDocument(slot15.dequeue());
+            printXmlDocument(slot16.dequeue());
 
         } catch (Exception e) {
             e.printStackTrace();
