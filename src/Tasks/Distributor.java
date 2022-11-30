@@ -23,7 +23,7 @@ public class Distributor {
         this.criteria = criteria; // "type"
     }
 
-    public void Distribute() {
+    public List<String> Distribute() {
         List<String> types = new LinkedList<>();
         XPath xPath = XPathFactory.newInstance().newXPath();
         while (!inputSlot.getQueue().isEmpty()) {
@@ -45,5 +45,6 @@ public class Distributor {
                 e.printStackTrace();
             }
         }
+        return types;
     }
 }

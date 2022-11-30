@@ -4,7 +4,7 @@ import Cafe.Slot;
 
 import java.util.List;
 
-public class Merger { //Por comprobar
+public class Merger {
 
     List<Slot> inputSlotList;
     Slot outputSlot;
