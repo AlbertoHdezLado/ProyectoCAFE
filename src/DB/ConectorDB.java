@@ -51,11 +51,11 @@ public class ConectorDB {
                 nameElement.setTextContent(parts[1]);
                 replicatorIDElement.setTextContent(id_replicator);
 
-                //if(con.realizarConsulta(sqlQuery)){
+                if(con.realizarConsulta(sqlQuery)){
                     resultElement.setTextContent("true");
-                /*}else{
+                }else {
                     resultElement.setTextContent("false");
-                }*/
+                }
 
                 reponseDocument.appendChild(resultSetElement);
                 resultSetElement.appendChild(nameElement);
