@@ -15,14 +15,9 @@ public class Merger { //Por comprobar
     }
 
     public void Merge() {
-        int i = 0;
-        while (!inputSlotList.isEmpty()) {
-            if (!inputSlotList.get(i%inputSlotList.size()).getQueue().isEmpty()) {
-                outputSlot.enqueue(inputSlotList.get(i%inputSlotList.size()).dequeue());
-                i++;
-            }
-            else {
-                inputSlotList.get(i).dequeue();
+        for (int i = 0; i<inputSlotList.size(); i++) {
+            while (!inputSlotList.get(i).getQueue().isEmpty()) {
+                outputSlot.enqueue(inputSlotList.get(i).dequeue());
             }
         }
     }

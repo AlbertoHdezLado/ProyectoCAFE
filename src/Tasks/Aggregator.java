@@ -18,7 +18,7 @@ import javax.xml.xpath.XPathFactory;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Aggregator { //Comprobado
+public class Aggregator {
 
     Slot inputSlot;
     Slot outputSlot;
@@ -74,8 +74,6 @@ public class Aggregator { //Comprobado
                 }
                 i++;
             }
-            // Mostramos el XML
-            printXmlDocument(aggregatedDocument);
 
             // Encolamos el documento resultante en el slot de salida
             outputSlot.enqueue(aggregatedDocument);
@@ -83,15 +81,4 @@ public class Aggregator { //Comprobado
             e.printStackTrace();
         }
     }
-
-    // Método para darle formato al XML al mostrarlo en la consola
-    public static void printXmlDocument(Document document) {
-        DOMImplementationLS domImplementationLS =
-                (DOMImplementationLS) document.getImplementation();
-        LSSerializer lsSerializer =
-                domImplementationLS.createLSSerializer();
-        String string = lsSerializer.writeToString(document);
-        System.out.println(string);
-    }
-
 }

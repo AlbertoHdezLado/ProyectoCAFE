@@ -34,6 +34,9 @@ public class Cafe {
         Slot slot14 = new Slot();
         Slot slot15 = new Slot();
         Slot slot16 = new Slot();
+        Slot slot17 = new Slot();
+        Slot slot18 = new Slot();
+        Slot slot19 = new Slot();
 
         List<Slot> slotList1 = new LinkedList<>();
         List<Slot> slotList2 = new LinkedList<>();
@@ -42,6 +45,7 @@ public class Cafe {
         List<Slot> slotList5 = new LinkedList<>();
         List<Slot> slotList6 = new LinkedList<>();
         List<Slot> slotList7 = new LinkedList<>();
+        List<Slot> slotList8 = new LinkedList<>();
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
@@ -104,10 +108,16 @@ public class Cafe {
             contextEnricherHot.Enrich();
             contextEnricherCold.Enrich();
 
-            printXmlDocument(slot15.dequeue());
-            printXmlDocument(slot15.dequeue());
-            printXmlDocument(slot16.dequeue());
+            slotList8.add(slot15);
+            slotList8.add(slot16);
 
+            Merger merger = new Merger(slotList8, slot17);
+            merger.Merge();
+
+            Aggregator aggregatorHot = new Aggregator(slot17, slot18, "//drink");
+            aggregatorHot.Aggregate();
+
+            printXmlDocument(slot18.dequeue());
         } catch (Exception e) {
             e.printStackTrace();
         }
