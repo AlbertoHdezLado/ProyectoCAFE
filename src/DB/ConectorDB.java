@@ -34,8 +34,6 @@ public class ConectorDB {
                 String id_replicator = node.item(0).getAttributes().item(0).getTextContent();
 
                 String[] parts = sqlQuery.split("'");
-                System.out.println(parts[1]);
-                System.out.println(id_replicator);
 
                 // Builder para cargar el documento
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -45,8 +43,7 @@ public class ConectorDB {
                 Document reponseDocument = builder.newDocument();
 
                 // Creamos el nodo sql
-                Element resultsetElement = reponseDocument.createElement("resultset");
-                Element fileElement = reponseDocument.createElement("file");
+                Element resultSetElement = reponseDocument.createElement("resultSet");
                 Element nameElement = reponseDocument.createElement("name");
                 Element replicatorIDElement = reponseDocument.createElement("replicator_id");
                 Element resultElement = reponseDocument.createElement("result");
@@ -54,17 +51,16 @@ public class ConectorDB {
                 nameElement.setTextContent(parts[1]);
                 replicatorIDElement.setTextContent(id_replicator);
 
-                if(con.realizarConsulta(sqlQuery)){
+                //if(con.realizarConsulta(sqlQuery)){
                     resultElement.setTextContent("true");
-                }else{
-                    resultElement.setTextContent("false");
-                }
+                //}else{
+                    //resultElement.setTextContent("false");
+                //}
 
-                reponseDocument.appendChild(resultsetElement);
-                resultsetElement.appendChild(fileElement);
-                fileElement.appendChild(nameElement);
-                fileElement.appendChild(replicatorIDElement);
-                fileElement.appendChild(resultElement);
+                reponseDocument.appendChild(resultSetElement);
+                resultSetElement.appendChild(nameElement);
+                resultSetElement.appendChild(replicatorIDElement);
+                resultSetElement.appendChild(resultElement);
 
                 outputSlot.enqueue(reponseDocument);
 

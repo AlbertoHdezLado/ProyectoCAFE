@@ -2,6 +2,7 @@ package Tasks;
 
 import Cafe.Slot;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPath;
@@ -48,21 +49,47 @@ public class Correlator {
                     j++;
                 }
 
-                // En el caso de que todos los slot tienen un documento con el id deseado, los sacamos al mismo tiempo por la salida
+                // En el caso de que todos los slot tienen un documento con el replicator_id deseado, los sacamos al mismo tiempo por la salida
                 if (foundAllSlots) {
+                    // Eliminamos el replicator_id del documento del primer slot
+                    NodeList nodeList = (NodeList) xPath.evaluate("/*", inputDocument, XPathConstants.NODESET);
+                    NodeList nodeListChild = nodeList.item(0).getChildNodes();
+                    for (int nodePos = nodeListChild.getLength()-1; nodePos>=0 ; nodePos--) {
+                        Node node = nodeListChild.item(nodePos);
+                        if (node.getNodeName().equals("replicator_id")) {
+                            node.getParentNode().removeChild(node);
+                        }
+                    }
                     outputSlotList.get(0).enqueue(inputDocument);
+                    // Para el resto de slots de entrada (quitando el primero)
                     for (int k = 1; k < inputSlotList.size(); k++) {
                         found = false;
                         int l = 0;
+                        // Buscamos el documento del slot que queremos llevar a la salida (por replicator_id)
                         while (!found && l < inputSlotList.get(k).getQueue().size() ) {
                             Document aux = inputSlotList.get(k).dequeue();
                             NodeList auxIDNode = (NodeList) xPath.evaluate("//replicator_id", aux, XPathConstants.NODESET);
                             String auxID = auxIDNode.item(0).getTextContent();
+
+                            // Si hemos encontrado el documento
                             if (replicatorID.equals(auxID)) {
+                                // Eliminamos el replicator_id
+                                NodeList nodeList2 = (NodeList) xPath.evaluate("/*", aux, XPathConstants.NODESET);
+                                NodeList nodeListChild2 = nodeList2.item(0).getChildNodes();
+                                for (int nodePos = nodeListChild2.getLength()-1; nodePos>=0 ; nodePos--) {
+                                    Node node = nodeListChild2.item(nodePos);
+                                    System.out.println(node.getNodeName());
+                                    if (node.getNodeName().equals("replicator_id"))
+                                        node.getParentNode().removeChild(node);
+                                }
+
+                                // Encolamos el documento en la salida
                                 outputSlotList.get(k).enqueue(aux);
                                 found = true;
                             }
+                            // Si no hemos encontrado el elemento
                             else {
+                                // Encolamos el documento en la entrada de nuevo
                                 inputSlotList.get(k).enqueue(aux);
                                 l++;
                             }
