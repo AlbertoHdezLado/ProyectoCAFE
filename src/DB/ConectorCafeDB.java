@@ -1,6 +1,6 @@
 package DB;
 
-import Cafe.Slot;
+import Main.Slot;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -11,15 +11,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-public class ConectorDB {
+public class ConectorCafeDB {
     Slot inputSlot;
     Slot outputSlot;
-    Conexion con;
+    CafeDB con;
 
-    public ConectorDB(Slot inputSlot, Slot outputSlot) throws Exception {
+    public ConectorCafeDB(Slot inputSlot, Slot outputSlot) throws Exception {
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
-        con=new Conexion();
+        con=new CafeDB();
     }
 
     public void Conect() {

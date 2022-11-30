@@ -1,7 +1,7 @@
 package DB;
 
 import java.sql.*;
-public class Conexion {
+public class CafeDB {
     private Connection conn = null;
     private PreparedStatement ps = null;
 
@@ -11,7 +11,7 @@ public class Conexion {
      */
 
     //contructor que establece la conexion con la base de datos.
-    public Conexion() throws Exception {
+    public CafeDB() throws Exception {
         try{
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String url="jdbc:sqlserver://serverintegracion2.database.windows.net:1433;databaseName=dbintegracion;user=admin12;password=Usuario12;";

@@ -1,6 +1,6 @@
 package Tasks;
 
-import Cafe.Slot;
+import Main.Slot;
 
 import java.util.List;
 

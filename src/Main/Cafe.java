@@ -1,25 +1,19 @@
-package Cafe;
+package Main;
 
-import DB.ConectorDB;
+import DB.ConectorCafeDB;
 import Tasks.*;
 import org.w3c.dom.Document;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Cafe {
-    public static void main(String[] args) {
-        new Cafe();
-    }
+import static Main.Main.printXmlDocument;
 
+public class Cafe {
     public Cafe() {
         Slot splitterInput = new Slot();
         Slot splitterOutput = new Slot();
@@ -80,7 +74,7 @@ public class Cafe {
 
                 // Conector
                 conectorOutput = new Slot();
-                ConectorDB conector = new ConectorDB(translatorOuput, conectorOutput);
+                ConectorCafeDB conector = new ConectorCafeDB(translatorOuput, conectorOutput);
                 conector.Conect();
 
                 // Entrada correlator
@@ -117,21 +111,9 @@ public class Cafe {
             Aggregator aggregatorHot = new Aggregator(mergerOutput, agreggatorOutput, "//drink");
             aggregatorHot.Aggregate();
 
-            printXmlDocument(agreggatorOutput.dequeue());
+            printXmlDocument(agreggatorOutput.getQueue().element());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-    }
-
-    // Método para darle formato al XML al mostrarlo en la consola
-    public static void printXmlDocument(Document document) {
-        DOMImplementationLS domImplementationLS =
-                (DOMImplementationLS) document.getImplementation();
-        LSSerializer lsSerializer =
-                domImplementationLS.createLSSerializer();
-        String string = lsSerializer.writeToString(document);
-        System.out.println(string);
     }
 }

@@ -1,0 +1,22 @@
+<student>
+    <student_id>74382</student_id>
+    <name>Fabricio Lopez Castilla</name>
+    <course>4</course>
+    <subjects>
+        <subject>
+            <subject_id>MII</subject_id>
+            <grade>9.1</grade>
+            <evaluation>Ordinary</evaluation>
+        </subject>
+        <subject>
+            <subject_id>ADE</subject_id>
+            <grade>6.3</grade>
+            <evaluation>Extraordinary</evaluation>
+        </subject>
+        <subject>
+            <subject_id>FP</subject_id>
+            <grade>3.7</grade>
+            <evaluation>Extraordinary</evaluation>
+        </subject>
+    </subjects>
+</student>
