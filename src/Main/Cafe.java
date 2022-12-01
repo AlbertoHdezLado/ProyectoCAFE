@@ -19,7 +19,7 @@ public class Cafe {
         Slot splitterOutput = new Slot();
         Slot replicatorOutput1;
         Slot replicatorOutput2;
-        Slot translatorOuput;
+        Slot translatorOutput;
         Slot conectorOutput;
         Slot correlatorOutput1;
         Slot correlatorOutput2;
@@ -63,18 +63,16 @@ public class Cafe {
                 replicatorHot.Replicate();
 
                 // Translator
-                translatorOuput = new Slot();
-                Translator translator = new Translator(replicatorOutputList.get(0), translatorOuput,"//drink/name");
+                translatorOutput = new Slot();
+                Translator translator = new Translator(replicatorOutputList.get(0), translatorOutput,"//drink/name");
                 if (types.get(i).equals("hot"))
                     translator.TranslateSQL("Nombre", "dbo.BEBIDAS_CALIENTES", "and stock>0");
                 else
                     translator.TranslateSQL("Nombre", "dbo.BEBIDAS_FRIAS", "and stock>0");
 
-                System.out.println(types.get(i));
-
                 // Conector
                 conectorOutput = new Slot();
-                ConectorCafeDB conector = new ConectorCafeDB(translatorOuput, conectorOutput);
+                ConectorCafeDB conector = new ConectorCafeDB(translatorOutput, conectorOutput);
                 conector.Conect();
 
                 // Entrada correlator

@@ -24,7 +24,7 @@ public class Filter {
 
     public void Filt() {
         // Desencolamos el documento del slot de entrada
-        if (!inputSlot.getQueue().isEmpty()) {
+        while (!inputSlot.getQueue().isEmpty()) {
             Document inputDocument = inputSlot.dequeue();
             try {
                 // Consulta xPath para extraer una lista de elementos encontrados.

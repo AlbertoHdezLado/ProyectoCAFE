@@ -11,12 +11,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-public class ConectorSchoolDB {
+public class ConectorUniDB {
     Slot inputSlot;
     Slot outputSlot;
     CafeDB con;
 
-    public ConectorSchoolDB(Slot inputSlot, Slot outputSlot) throws Exception {
+    public ConectorUniDB(Slot inputSlot, Slot outputSlot) throws Exception {
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
         con=new CafeDB();
@@ -44,23 +44,19 @@ public class ConectorSchoolDB {
 
                 // Creamos el nodo sql
                 Element resultSetElement = reponseDocument.createElement("resultSet");
-                Element nameElement = reponseDocument.createElement("name");
+                Element dniElement = reponseDocument.createElement("dni");
                 Element replicatorIDElement = reponseDocument.createElement("replicator_id");
-                Element resultElement = reponseDocument.createElement("result");
+                Element emailElement = reponseDocument.createElement("email");
 
-                nameElement.setTextContent(parts[1]);
+                dniElement.setTextContent(parts[1]);
                 replicatorIDElement.setTextContent(id_replicator);
 
-                if(con.realizarConsulta(sqlQuery)){
-                    resultElement.setTextContent("true");
-                }else {
-                    resultElement.setTextContent("false");
-                }
+                emailElement.setTextContent("alumno"+parts[1]+"@alu.uhu.es");
 
                 reponseDocument.appendChild(resultSetElement);
-                resultSetElement.appendChild(nameElement);
+                resultSetElement.appendChild(dniElement);
                 resultSetElement.appendChild(replicatorIDElement);
-                resultSetElement.appendChild(resultElement);
+                resultSetElement.appendChild(emailElement);
 
                 outputSlot.enqueue(reponseDocument);
 
