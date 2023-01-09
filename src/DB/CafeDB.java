@@ -5,24 +5,17 @@ public class CafeDB {
     private Connection conn = null;
     private PreparedStatement ps = null;
 
-    /**
-     Establece la conexión con el servidor
-     @throws Exception si ocurre cualquier anormalidad
-     */
-
     //contructor que establece la conexion con la base de datos.
     public CafeDB() throws Exception {
-        try{
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String url="jdbc:sqlserver://serverintegracion2.database.windows.net:1433;databaseName=dbintegracion;user=admin12;password=Usuario12;";
-            conn = DriverManager.getConnection(url);
-            System.out.println("Conexion realizada");
-        }
-        catch(SQLException e){
-            System.out.println("ERROR EN LA CONEXION "+e.getMessage());
-            //JOptionPane.showMessageDialog(null,"No se ha podido establecer la conexión correctamene","ERROR",JOptionPane.ERROR, new ImageIcon("src/Aplicacion/img/desconexion.png"));
-        }
+        String bd = "sql7589280";
+        String url = "jdbc:mysql://sql7.freesqldatabase.com:3306/";
+        String user = "sql7589280";
+        String password = "BK5YL3KlhN";
+        String driver = "com.mysql.cj.jdbc.Driver";
 
+        Class.forName(driver);
+        conn = DriverManager.getConnection(url+bd,user,password);
+        System.out.println("Conexion exitosa");
     }
     /**
      Implementa la desconexión con el servidor
