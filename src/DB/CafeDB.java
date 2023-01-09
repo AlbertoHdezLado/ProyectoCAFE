@@ -32,7 +32,7 @@ public class CafeDB {
     }
 
     public boolean existeBebidaFria(String nombre) throws SQLException {
-        ps=conn.prepareStatement("select Nombre from dbo.BEBIDAS_FRIAS where Nombre=? and stock>0");
+        ps=conn.prepareStatement("select Nombre from BEBIDAS_FRIAS where Nombre=? and stock>0");
         ps.setString(1, nombre);
         ResultSet res=ps.executeQuery();
         boolean existe=res.next();
@@ -41,7 +41,7 @@ public class CafeDB {
     }
 
     public boolean existeBebidaCaliente(String nombre) throws SQLException {
-        ps=conn.prepareStatement("select Nombre from dbo.BEBIDAS_CALIENTES where Nombre=? and stock>0");
+        ps=conn.prepareStatement("select Nombre from BEBIDAS_CALIENTES where Nombre=? and stock>0");
         ps.setString(1, nombre);
         ResultSet res=ps.executeQuery();
         boolean existe=res.next();
@@ -54,7 +54,7 @@ public class CafeDB {
             System.out.println("No hay existencias");
             return false;
         }else{
-            ps=conn.prepareStatement("UPDATE dbo.BEBIDAS_FRIAS SET stock = stock - 1 where Nombre = ?");
+            ps=conn.prepareStatement("UPDATE BEBIDAS_FRIAS SET stock = stock - 1 where Nombre = ?");
             ps.setString(1,nombre);
             ps.executeUpdate();
             ps.close();
@@ -67,7 +67,7 @@ public class CafeDB {
             System.out.println("No hay existencias");
             return false;
         }else{
-            ps=conn.prepareStatement("UPDATE dbo.BEBIDAS_CALIENTES SET stock = stock - 1 where Nombre = ?");
+            ps=conn.prepareStatement("UPDATE BEBIDAS_CALIENTES SET stock = stock - 1 where Nombre = ?");
             ps.setString(1,nombre);
             ps.executeUpdate();
             ps.close();
