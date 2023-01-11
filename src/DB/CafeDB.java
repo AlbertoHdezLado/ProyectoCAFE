@@ -7,15 +7,16 @@ public class CafeDB {
 
     //contructor que establece la conexion con la base de datos.
     public CafeDB() throws Exception {
-        String bd = "sql7589280";
-        String url = "jdbc:mysql://sql7.freesqldatabase.com:3306/";
-        String user = "sql7589280";
-        String password = "BK5YL3KlhN";
-        String driver = "com.mysql.cj.jdbc.Driver";
-
-        Class.forName(driver);
-        conn = DriverManager.getConnection(url+bd,user,password);
-        System.out.println("Conexion exitosa");
+        try{
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            String url="jdbc:sqlserver://servidoriia.database.windows.net:1433;database=BDIIA;user=admin12@servidoriia;password=universidaddeHuelva12_;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+            conn = DriverManager.getConnection(url);
+            System.out.println("Conexion realizada");
+        }
+        catch(SQLException e){
+            System.out.println("ERROR EN LA CONEXION "+e.getMessage());
+            //JOptionPane.showMessageDialog(null,"No se ha podido establecer la conexión correctamene","ERROR",JOptionPane.ERROR, new ImageIcon("src/Aplicacion/img/desconexion.png"));
+        }
     }
     /**
      Implementa la desconexión con el servidor
@@ -32,7 +33,7 @@ public class CafeDB {
     }
 
     public boolean existeBebidaFria(String nombre) throws SQLException {
-        ps=conn.prepareStatement("select Nombre from BEBIDAS_FRIAS where Nombre=? and stock>0");
+        ps=conn.prepareStatement("select Nombre from dbo.BEBIDAS_FRIAS where Nombre=? and stock>0");
         ps.setString(1, nombre);
         ResultSet res=ps.executeQuery();
         boolean existe=res.next();
@@ -41,7 +42,7 @@ public class CafeDB {
     }
 
     public boolean existeBebidaCaliente(String nombre) throws SQLException {
-        ps=conn.prepareStatement("select Nombre from BEBIDAS_CALIENTES where Nombre=? and stock>0");
+        ps=conn.prepareStatement("select Nombre from dbo.BEBIDAS_CALIENTES where Nombre=? and stock>0");
         ps.setString(1, nombre);
         ResultSet res=ps.executeQuery();
         boolean existe=res.next();
@@ -54,7 +55,7 @@ public class CafeDB {
             System.out.println("No hay existencias");
             return false;
         }else{
-            ps=conn.prepareStatement("UPDATE BEBIDAS_FRIAS SET stock = stock - 1 where Nombre = ?");
+            ps=conn.prepareStatement("UPDATE dbo.BEBIDAS_FRIAS SET stock = stock - 1 where Nombre = ?");
             ps.setString(1,nombre);
             ps.executeUpdate();
             ps.close();
@@ -67,7 +68,7 @@ public class CafeDB {
             System.out.println("No hay existencias");
             return false;
         }else{
-            ps=conn.prepareStatement("UPDATE BEBIDAS_CALIENTES SET stock = stock - 1 where Nombre = ?");
+            ps=conn.prepareStatement("UPDATE dbo.BEBIDAS_CALIENTES SET stock = stock - 1 where Nombre = ?");
             ps.setString(1,nombre);
             ps.executeUpdate();
             ps.close();
