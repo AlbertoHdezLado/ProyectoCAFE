@@ -42,7 +42,7 @@ public class Translator {
 
                 // Creamos el nodo sql
                 Element sqlElement = translatedDocument.createElement("sql");
-                sqlElement.setTextContent("select * from " + TableName + " where " + variable + " =' " + element + " '" + otherConditions);
+                sqlElement.setTextContent("select * from " + TableName + " where " + variable + " = '" + element + "' " + otherConditions);
 
                 // Le añadimos el replicator id si tiene
                 NodeList replicatorIDNode = (NodeList) xPath.evaluate("//replicator_id", inputDocument, XPathConstants.NODESET);

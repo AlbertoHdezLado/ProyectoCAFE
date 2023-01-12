@@ -32,50 +32,6 @@ public class CafeDB {
         }
     }
 
-    public boolean existeBebidaFria(String nombre) throws SQLException {
-        ps=conn.prepareStatement("select Nombre from dbo.BEBIDAS_FRIAS where Nombre=? and stock>0");
-        ps.setString(1, nombre);
-        ResultSet res=ps.executeQuery();
-        boolean existe=res.next();
-        ps.close();
-        return existe;
-    }
-
-    public boolean existeBebidaCaliente(String nombre) throws SQLException {
-        ps=conn.prepareStatement("select Nombre from dbo.BEBIDAS_CALIENTES where Nombre=? and stock>0");
-        ps.setString(1, nombre);
-        ResultSet res=ps.executeQuery();
-        boolean existe=res.next();
-        ps.close();
-        return existe;
-    }
-
-    public boolean pedirBebidaFria(String nombre) throws SQLException {
-        if (!existeBebidaFria(nombre)){
-            System.out.println("No hay existencias");
-            return false;
-        }else{
-            ps=conn.prepareStatement("UPDATE dbo.BEBIDAS_FRIAS SET stock = stock - 1 where Nombre = ?");
-            ps.setString(1,nombre);
-            ps.executeUpdate();
-            ps.close();
-        }
-        return true;
-    }
-
-    public boolean pedirBebidaCalientes(String nombre) throws SQLException {
-        if (!existeBebidaCaliente(nombre)){
-            System.out.println("No hay existencias");
-            return false;
-        }else{
-            ps=conn.prepareStatement("UPDATE dbo.BEBIDAS_CALIENTES SET stock = stock - 1 where Nombre = ?");
-            ps.setString(1,nombre);
-            ps.executeUpdate();
-            ps.close();
-        }
-        return true;
-    }
-
     public boolean realizarConsulta(String sqlQuery) throws SQLException {
         ps=conn.prepareStatement(sqlQuery);
         ResultSet res=ps.executeQuery();
@@ -86,20 +42,26 @@ public class CafeDB {
         ps.close();
 
         if(existe){
-            ps=conn.prepareStatement("UPDATE" +nombreTa+ "SET stock = stock - 1" + "where Nombre="+nombreBebida);
+            System.out.println("Se ha encontrado " + nombreBebida + " en el almacén.");
+            ps=conn.prepareStatement("UPDATE " +nombreTa+ " SET stock = stock - 1" + " where Nombre="+nombreBebida);
             ps.executeUpdate();
             ps.close();
             return true;
+        }
+        else{
+            System.out.println("No se ha encontrado " + nombreBebida + " en el almacén.");
         }
 
 
         return false;
     }
+
     /**
      Devuelve la propiedad Connection
      @return conn
      @throws SQLException si ocurre cualquier anormalidad
-     */
+     **/
+
     public Connection getConexionOracle() throws SQLException {
         return conn;
     }
