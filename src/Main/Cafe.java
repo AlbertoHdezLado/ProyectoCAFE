@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import static Main.Main.printXmlDocument;
+import static Main.Main.xmlDocumentToFile;
 
 public class Cafe {
     public Cafe() {
@@ -31,85 +32,93 @@ public class Cafe {
         List<Slot> replicatorOutputList;
         List<Slot> correlatorInputList;
         List<Slot> correlatorOutputList;
-        List<Slot> mergerInputList = new LinkedList<>();
+        List<Slot> mergerInputList;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
             Scanner in = new Scanner(System.in);
-            System.out.print("Introduce un numero del 1 al 9: ");
-            int order = in.nextInt();
+            System.out.print("Introduce una secuencia de comandas del 1 al 9 separadas por ',' (ej: 4,7,2,1): ");
+            String orders = in.next();
 
-            Document documento = builder.parse(new File("src/Orders/order"+order+".xml"));
+            String[] ordersList = orders.split(",");
 
-            splitterInput.enqueue(documento);
+            for (int n = 0; n < ordersList.length; n++) {
 
-            Splitter splitter = new Splitter(splitterInput,splitterOutput, "//drink");
-            splitter.Split();
+                Document documento = builder.parse(new File("Orders/order" + ordersList[n] + ".xml"));
 
-            Distributor distributor = new Distributor(splitterOutput, distributorOutputList, "//type");
-            List<String> types = distributor.Distribute();
+                splitterInput = new Slot();
+                splitterInput.enqueue(documento);
+                splitterOutput = new Slot();
+                Splitter splitter = new Splitter(splitterInput, splitterOutput, "//drink");
+                splitter.Split();
 
-            for (int i = 0; i < distributorOutputList.size(); i++) {
-                // Replicator
-                replicatorOutputList = new LinkedList<>();
-                replicatorOutput1 = new Slot();
-                replicatorOutput2 = new Slot();
-                replicatorOutputList.add(replicatorOutput1);
-                replicatorOutputList.add(replicatorOutput2);
+                distributorOutputList = new LinkedList<>();
+                Distributor distributor = new Distributor(splitterOutput, distributorOutputList, "//type");
+                List<String> types = distributor.Distribute();
 
-                Replicator replicatorHot = new Replicator(distributorOutputList.get(i), replicatorOutputList);
-                replicatorHot.Replicate();
+                mergerInputList = new LinkedList<>();
+                for (int i = 0; i < distributorOutputList.size(); i++) {
+                    // Replicator
+                    replicatorOutputList = new LinkedList<>();
+                    replicatorOutput1 = new Slot();
+                    replicatorOutput2 = new Slot();
+                    replicatorOutputList.add(replicatorOutput1);
+                    replicatorOutputList.add(replicatorOutput2);
 
-                // Translator
-                translatorOutput = new Slot();
-                Translator translator = new Translator(replicatorOutputList.get(0), translatorOutput,"//drink/name");
-                if (types.get(i).equals("hot"))
-                    translator.TranslateSQL("Nombre", "dbo.BEBIDAS_CALIENTES", "and stock>0");
-                else
-                    translator.TranslateSQL("Nombre", "dbo.BEBIDAS_FRIAS", "and stock>0");
+                    Replicator replicator = new Replicator(distributorOutputList.get(i), replicatorOutputList);
+                    replicator.Replicate();
 
-                // Conector
-                conectorOutput = new Slot();
-                ConectorCafeDB conector = new ConectorCafeDB(translatorOutput, conectorOutput);
-                conector.Conect();
+                    // Translator
+                    translatorOutput = new Slot();
+                    Translator translator = new Translator(replicatorOutputList.get(0), translatorOutput, "//drink/name");
+                    if (types.get(i).equals("hot"))
+                        translator.TranslateSQL("Nombre", "dbo.BEBIDAS_CALIENTES", "and stock>0");
+                    else
+                        translator.TranslateSQL("Nombre", "dbo.BEBIDAS_FRIAS", "and stock>0");
 
-                // Entrada correlator
-                correlatorInputList = new LinkedList<>();
-                correlatorInputList.add(replicatorOutputList.get(1));
-                correlatorInputList.add(conectorOutput);
+                    // Conector
+                    conectorOutput = new Slot();
+                    ConectorCafeDB conector = new ConectorCafeDB(translatorOutput, conectorOutput);
+                    conector.Conect();
 
-                // Salida correlator
-                correlatorOutputList = new LinkedList<>();
-                correlatorOutput1 = new Slot();
-                correlatorOutput2 = new Slot();
-                correlatorOutputList.add(correlatorOutput1);
-                correlatorOutputList.add(correlatorOutput2);
+                    // Entrada correlator
+                    correlatorInputList = new LinkedList<>();
+                    correlatorInputList.add(replicatorOutputList.get(1));
+                    correlatorInputList.add(conectorOutput);
 
-                // Correlator
-                Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
-                correlator.Correlate();
+                    // Salida correlator
+                    correlatorOutputList = new LinkedList<>();
+                    correlatorOutput1 = new Slot();
+                    correlatorOutput2 = new Slot();
+                    correlatorOutputList.add(correlatorOutput1);
+                    correlatorOutputList.add(correlatorOutput2);
 
-                // Context enricher
-                contextEnricherOutput = new Slot();
-                ContextEnricher contextEnricher = new ContextEnricher(correlatorOutputList.get(0), correlatorOutputList.get(1), contextEnricherOutput, "//drink[1]");
-                contextEnricher.Enrich();
-                mergerInputList.add(contextEnricherOutput);
+                    // Correlator
+                    Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
+                    correlator.Correlate();
+
+                    // Context enricher
+                    contextEnricherOutput = new Slot();
+                    ContextEnricher contextEnricher = new ContextEnricher(correlatorOutputList.get(0), correlatorOutputList.get(1), contextEnricherOutput, "//drink[1]");
+                    contextEnricher.Enrich();
+                    mergerInputList.add(contextEnricherOutput);
+                }
+
+                // Merger
+                mergerOutput = new Slot();
+                Merger merger = new Merger(mergerInputList, mergerOutput);
+                merger.Merge();
+
+                // Aggregator
+                agreggatorOutput = new Slot();
+                Aggregator aggregator = new Aggregator(mergerOutput, agreggatorOutput, "//drink");
+                aggregator.Aggregate();
+
+                Document outputDoc = agreggatorOutput.getQueue().element();
+                xmlDocumentToFile(outputDoc, ordersList[n]);
             }
-
-            // Merger input list
-
-
-            // Merger
-            Merger merger = new Merger(mergerInputList, mergerOutput);
-            merger.Merge();
-
-            // Aggregator
-            Aggregator aggregatorHot = new Aggregator(mergerOutput, agreggatorOutput, "//drink");
-            aggregatorHot.Aggregate();
-
-            printXmlDocument(agreggatorOutput.getQueue().element());
         } catch (Exception e) {
             e.printStackTrace();
         }

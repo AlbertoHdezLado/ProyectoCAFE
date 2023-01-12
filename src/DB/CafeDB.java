@@ -25,7 +25,7 @@ public class CafeDB {
     public void desconexion() throws SQLException {
         try{
             conn.close();
-            System.out.println("Desconexion realizada con exito");
+            System.out.println("Desconexion realizada.");
         }
         catch(SQLException e){
             System.out.println("ERROR EN LA DESCONEXION"+e.getMessage());

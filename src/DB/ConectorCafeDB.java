@@ -19,15 +19,15 @@ public class ConectorCafeDB {
     public ConectorCafeDB(Slot inputSlot, Slot outputSlot) throws Exception {
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
-        con=new CafeDB();
+        con = new CafeDB();
     }
 
     public void Conect() {
         XPath xPath = XPathFactory.newInstance().newXPath();
+        try {
+            while (!inputSlot.getQueue().isEmpty()) {
+                Document inputDocument = inputSlot.dequeue();
 
-        while (!inputSlot.getQueue().isEmpty()) {
-            Document inputDocument = inputSlot.dequeue();
-            try {
                 // Consulta xPath para extraer una lista de elementos encontrados.
                 NodeList node = (NodeList) xPath.evaluate("/sql", inputDocument, XPathConstants.NODESET);
                 String sqlQuery = node.item(0).getTextContent();
@@ -51,9 +51,9 @@ public class ConectorCafeDB {
                 nameElement.setTextContent(parts[1]);
                 replicatorIDElement.setTextContent(id_replicator);
 
-                if(con.realizarConsulta(sqlQuery)){
+                if (con.realizarConsulta(sqlQuery)) {
                     resultElement.setTextContent("true");
-                }else {
+                } else {
                     resultElement.setTextContent("false");
                 }
 
@@ -64,9 +64,10 @@ public class ConectorCafeDB {
 
                 outputSlot.enqueue(reponseDocument);
 
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            con.desconexion();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
