@@ -15,107 +15,118 @@ import static Main.Main.*;
 
 public class Uni {
     public Uni() {
-        Slot splitterInput = new Slot();
-        Slot splitterOutput = new Slot();
-        Slot filterOutput = new Slot();
-        Slot replicatorOutput1 = new Slot();
-        Slot replicatorOutput2 = new Slot();
-        Slot translatorSQLOutput = new Slot();
-        Slot conectorOutput = new Slot();
-        Slot correlatorOutput1 = new Slot();
-        Slot correlatorOutput2 = new Slot();
-        Slot contextEnricherOutput = new Slot();
-        Slot translatorEmailGatewayOutput = new Slot();
-
-        List<Slot> replicatorOutputList = new LinkedList<>();
-        List<Slot> correlatorInputList = new LinkedList<>();
-        List<Slot> correlatorOutputList = new LinkedList<>();
+        Slot splitterInput, splitterOutput, filterOutput, replicatorOutput1,
+                replicatorOutput2, translatorSQLOutput, conectorOutput, correlatorOutput1,
+                correlatorOutput2, contextEnricherOutput, translatorEmailGatewayOutput;
+        List<Slot> replicatorOutputList, correlatorInputList, correlatorOutputList;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
             Scanner in = new Scanner(System.in);
-            System.out.print("Introduce un numero del 1 al 4: ");
-            int acta = in.nextInt();
+            System.out.print("Introduce una secuencia de actas del 1 al 4 separadas por ',' (ej: 4,2,3,1): ");
+            String actas = in.next();
 
-            Document documento = builder.parse(new File("Actas/acta" + acta + ".xml"));
+            String[] actasList = actas.split(",");
 
-            System.out.println("Principio: ");
-            printXmlDocument(documento);
+            for (int n = 0; n < actasList.length; n++) {
 
-            splitterInput.enqueue(documento);
+                Document documento = builder.parse(new File("Actas/acta" + actasList[n] + ".xml"));
 
-            Splitter splitter = new Splitter(splitterInput,splitterOutput, "//alumno");
-            splitter.Split();
+                System.out.println("------------------------------------------------");
+                System.out.println("| CARGANDO ACTA " + n + " DE LA RUTA [Actas/acta" + n + ".xml] |");
+                System.out.println("------------------------------------------------");
+                System.out.println("XML de entrada: ");
+                printXmlDocument(documento);
 
-            System.out.println("Despues del spliter: ");
-            printSlot(splitterOutput);
+                splitterInput = new Slot();
+                splitterInput.enqueue(documento);
 
-            Filter filter = new Filter(splitterOutput,filterOutput, "//alumnos/alumno[calificacion!=\"No presentado\"]");
-            filter.Filt();
+                splitterOutput = new Slot();
+                Splitter splitter = new Splitter(splitterInput, splitterOutput, "//alumno");
+                splitter.Split();
 
-            System.out.println("Despues del filter: ");
-            printSlot(filterOutput);
+                System.out.println("Despues del splitter: ");
+                printSlot(splitterOutput);
 
-            replicatorOutputList.add(replicatorOutput1);
-            replicatorOutputList.add(replicatorOutput2);
+                filterOutput = new Slot();
+                Filter filter = new Filter(splitterOutput, filterOutput, "//alumnos/alumno[calificacion!=\"No presentado\"]");
+                filter.Filt();
 
-            Replicator replicator = new Replicator(filterOutput, replicatorOutputList);
-            replicator.Replicate();
+                System.out.println("Despues del filter: ");
+                printSlot(filterOutput);
 
-            System.out.println("Despues del replicator: ");
-            for (int slot = 0; slot<replicatorOutputList.size(); slot++) {
-                System.out.println("-Slot " + slot + ": ");
-                printSlot(replicatorOutputList.get(slot));
+                replicatorOutputList = new LinkedList<>();
+                replicatorOutput1 = new Slot();
+                replicatorOutput2 = new Slot();
+                replicatorOutputList.add(replicatorOutput1);
+                replicatorOutputList.add(replicatorOutput2);
+
+                Replicator replicator = new Replicator(filterOutput, replicatorOutputList);
+                replicator.Replicate();
+
+                System.out.println("Despues del replicator: ");
+                for (int slot = 0; slot < replicatorOutputList.size(); slot++) {
+                    System.out.println("Salida " + slot + "replicator: ");
+                    printSlot(replicatorOutputList.get(slot));
+                }
+
+                translatorSQLOutput = new Slot();
+                Translator translatorSQL = new Translator(replicatorOutputList.get(0), translatorSQLOutput, "//alumno/dni");
+                translatorSQL.TranslateSQL("email", "dbo.ALUMNOS", "dni", "");
+
+                System.out.println("Despues del translator: ");
+                printSlot(translatorSQLOutput);
+
+                conectorOutput = new Slot();
+                ConectorUniDB conector = new ConectorUniDB(translatorSQLOutput, conectorOutput);
+                conector.Conect();
+
+                System.out.println("Despues del conector: ");
+                printSlot(conectorOutput);
+
+                correlatorInputList = new LinkedList<>();
+                correlatorInputList.add(replicatorOutputList.get(1));
+                correlatorInputList.add(conectorOutput);
+
+                correlatorOutputList = new LinkedList<>();
+                correlatorOutput1 = new Slot();
+                correlatorOutput2 = new Slot();
+                correlatorOutputList.add(correlatorOutput1);
+                correlatorOutputList.add(correlatorOutput2);
+
+                Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
+                correlator.Correlate();
+
+                System.out.println("Despues del correlator: ");
+                for (int slot = 0; slot < correlatorOutputList.size(); slot++) {
+                    System.out.println("Salida " + slot + "correlator: ");
+                    printSlot(correlatorOutputList.get(slot));
+                }
+
+                contextEnricherOutput = new Slot();
+                ContextEnricher contextEnricher = new ContextEnricher(correlatorOutputList.get(0), correlatorOutputList.get(1), contextEnricherOutput, "//alumno[1]");
+                contextEnricher.Enrich();
+
+                System.out.println("Despues del context enricher: ");
+                printSlot(contextEnricherOutput);
+
+                translatorEmailGatewayOutput = new Slot();
+                Translator translatorEmailGateway = new Translator(contextEnricherOutput, translatorEmailGatewayOutput, "//*");
+                String subject = "Calificaciones ? convocatoria ?.";
+                String[] subjectVariables = {"id_asignatura", "convocatoria"};
+                String content = "El alumno ? ha obtenido una calificación de ? en la convocatoria ? de ?.";
+                String[] contentVariables = {"nombreCompleto", "calificacion", "convocatoria", "id_asignatura"};
+                translatorEmailGateway.TranslateEmailGateway("no-reply@uhu.es", "email", subject, subjectVariables, content, contentVariables);
+
+                System.out.println("Despues del translator: ");
+                printSlot(translatorEmailGatewayOutput);
+
+                Document outputDoc = translatorEmailGatewayOutput.getQueue().element();
+                String pathArchivo = "Actas/Resultados/resultado" + actasList[n] + ".xml";
+                xmlDocumentToFile(outputDoc, pathArchivo);
             }
-
-            Translator translatorSQL = new Translator(replicatorOutputList.get(0), translatorSQLOutput, "//alumno/dni");
-            translatorSQL.TranslateSQL("email", "dbo.ALUMNOS", "dni", "");
-
-            System.out.println("Despues del translator: ");
-            printSlot(translatorSQLOutput);
-
-            ConectorUniDB conector = new ConectorUniDB(translatorSQLOutput, conectorOutput);
-            conector.Conect();
-
-            System.out.println("Despues del conector: ");
-            printSlot(conectorOutput);
-
-            correlatorInputList.add(replicatorOutputList.get(1));
-            correlatorInputList.add(conectorOutput);
-
-            correlatorOutputList.add(correlatorOutput1);
-            correlatorOutputList.add(correlatorOutput2);
-
-            Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
-            correlator.Correlate();
-
-            System.out.println("Despues del correlator: ");
-            for (int slot = 0; slot<correlatorOutputList.size(); slot++) {
-                System.out.println("-Slot " + slot + ": ");
-                printSlot(correlatorOutputList.get(slot));
-            }
-
-            ContextEnricher contextEnricher = new ContextEnricher(correlatorOutputList.get(0),correlatorOutputList.get(1),contextEnricherOutput, "//alumno[1]");
-            contextEnricher.Enrich();
-
-            System.out.println("Despues del context enricher: ");
-            printSlot(contextEnricherOutput);
-
-            Translator translatorEmailGateway = new Translator(contextEnricherOutput, translatorEmailGatewayOutput, "//*");
-            String subject = "Calificaciones ? convocatoria ?.";
-            String[] subjectVariables = {"id_asignatura","convocatoria"};
-            String content = "El alumno ? ha obtenido una calificación de ? en la convocatoria ? de ?.";
-            String[] contentVariables = {"nombreCompleto","calificacion","convocatoria","id_asignatura"};
-            translatorEmailGateway.TranslateEmailGateway("no-reply@uhu.es", "email", subject, subjectVariables, content, contentVariables);
-
-            System.out.println("Despues del translator: ");
-            printSlot(translatorEmailGatewayOutput);
-
-            Document outputDoc = translatorEmailGatewayOutput.getQueue().element();
-            //String pathArchivo = "Orders/Entregas/entrega"+ordersList[n]+".xml";
-            //xmlDocumentToFile(outputDoc, pathArchivo);
         } catch (Exception e) {
             e.printStackTrace();
         }

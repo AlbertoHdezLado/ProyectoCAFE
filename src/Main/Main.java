@@ -69,7 +69,7 @@ public class Main {
             FileWriter writer = new FileWriter(pathArchivo);
             StreamResult result = new StreamResult(writer);
             transformer.transform(source, result);
-            System.out.println(pathArchivo + " GENERADO CON EXITO]\n");
+            System.out.println("[" + pathArchivo + " GENERADO CON EXITO]\n");
         } catch (IOException | TransformerException e) {
             throw new RuntimeException(e);
         }
