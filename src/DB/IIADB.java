@@ -1,12 +1,11 @@
 package DB;
 
 import java.sql.*;
-public class CafeDB {
+public class IIADB {
     private Connection conn = null;
     private PreparedStatement ps = null;
 
-    //contructor que establece la conexion con la base de datos.
-    public CafeDB() throws Exception {
+    public IIADB() throws Exception {
         try{
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String url="jdbc:sqlserver://servidoriia.database.windows.net:1433;database=BDIIA;user=admin12@servidoriia;password=universidaddeHuelva12_;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
@@ -18,21 +17,18 @@ public class CafeDB {
             //JOptionPane.showMessageDialog(null,"No se ha podido establecer la conexión correctamene","ERROR",JOptionPane.ERROR, new ImageIcon("src/Aplicacion/img/desconexion.png"));
         }
     }
-    /**
-     Implementa la desconexión con el servidor
-     @throws SQLException si ocurre cualquier anormalidad
-     */
+
     public void desconexion() throws SQLException {
         try{
             conn.close();
-            System.out.println("Desconexion realizada.");
+            System.out.println("Desconexion realizada.\n");
         }
         catch(SQLException e){
             System.out.println("ERROR EN LA DESCONEXION"+e.getMessage());
         }
     }
 
-    public boolean realizarConsulta(String sqlQuery) throws SQLException {
+    public boolean realizarConsultaBebida(String sqlQuery) throws SQLException {
         ps=conn.prepareStatement(sqlQuery);
         ResultSet res=ps.executeQuery();
         String []consulta= sqlQuery.split(" ");
@@ -56,45 +52,13 @@ public class CafeDB {
         return false;
     }
 
-    /**
-     Devuelve la propiedad Connection
-     @return conn
-     @throws SQLException si ocurre cualquier anormalidad
-     **/
-
-    public Connection getConexionOracle() throws SQLException {
-        return conn;
+    public String realizarConsultaAlumno(String sqlQuery) throws SQLException {
+        ps=conn.prepareStatement(sqlQuery);
+        System.out.println(sqlQuery);
+        ResultSet res=ps.executeQuery();
+        res.next();
+        String email = res.getString(1).trim();
+        ps.close();
+        return email;
     }
-    /**
-     *  Inicia una transacción
-     *@throws SQLException si ocurre cualquier anormalidad
-     */
-    public void inicioTransaccion() throws SQLException {
-        conn.setAutoCommit(false);
-    }
-    /**
-     *  Finaliza una transacción con commint
-     *@throws SQLException si ocurre cualquier anormalidad
-     */
-    public void finTransaccionCommit() throws SQLException {
-        conn.commit();
-        conn.setAutoCommit(true);
-    }
-    /**
-     *  Finaliza una transacción con rollback
-     @throws SQLException si ocurre cualquier anormalidad
-     */
-    public void finTransaccionRollback() throws SQLException {
-        conn.rollback();
-        conn.setAutoCommit(true);
-    }
-
-    Statement createStatement() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-/*
-    CallableStatement prepareCall(String sql) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-*/
 }

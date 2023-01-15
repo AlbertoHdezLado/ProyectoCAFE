@@ -5,7 +5,7 @@
         <drink>
             <name>te</name>
             <type>hot</type>
-            <result>true</result>
+            <result>false</result>
         </drink>
         <drink>
             <name>tila</name>

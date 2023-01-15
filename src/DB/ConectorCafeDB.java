@@ -14,12 +14,12 @@ import javax.xml.xpath.XPathFactory;
 public class ConectorCafeDB {
     Slot inputSlot;
     Slot outputSlot;
-    CafeDB con;
+    IIADB con;
 
     public ConectorCafeDB(Slot inputSlot, Slot outputSlot) throws Exception {
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
-        con = new CafeDB();
+        con = new IIADB();
     }
 
     public void Conect() {
@@ -51,7 +51,7 @@ public class ConectorCafeDB {
                 nameElement.setTextContent(parts[1]);
                 replicatorIDElement.setTextContent(id_replicator);
 
-                if (con.realizarConsulta(sqlQuery)) {
+                if (con.realizarConsultaBebida(sqlQuery)) {
                     resultElement.setTextContent("true");
                 } else {
                     resultElement.setTextContent("false");

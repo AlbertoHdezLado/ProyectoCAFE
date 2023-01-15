@@ -14,20 +14,20 @@ import javax.xml.xpath.XPathFactory;
 public class ConectorUniDB {
     Slot inputSlot;
     Slot outputSlot;
-    CafeDB con;
+    IIADB con;
 
     public ConectorUniDB(Slot inputSlot, Slot outputSlot) throws Exception {
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
-        con=new CafeDB();
+        con=new IIADB();
     }
 
     public void Conect() {
         XPath xPath = XPathFactory.newInstance().newXPath();
+        try {
+            while (!inputSlot.getQueue().isEmpty()) {
+                Document inputDocument = inputSlot.dequeue();
 
-        while (!inputSlot.getQueue().isEmpty()) {
-            Document inputDocument = inputSlot.dequeue();
-            try {
                 // Consulta xPath para extraer una lista de elementos encontrados.
                 NodeList node = (NodeList) xPath.evaluate("/sql", inputDocument, XPathConstants.NODESET);
                 String sqlQuery = node.item(0).getTextContent();
@@ -51,7 +51,9 @@ public class ConectorUniDB {
                 dniElement.setTextContent(parts[1]);
                 replicatorIDElement.setTextContent(id_replicator);
 
-                emailElement.setTextContent("alumno"+parts[1]+"@alu.uhu.es");
+                String email = con.realizarConsultaAlumno(sqlQuery);
+
+                emailElement.setTextContent(email);
 
                 reponseDocument.appendChild(resultSetElement);
                 resultSetElement.appendChild(dniElement);
@@ -60,9 +62,10 @@ public class ConectorUniDB {
 
                 outputSlot.enqueue(reponseDocument);
 
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            con.desconexion();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

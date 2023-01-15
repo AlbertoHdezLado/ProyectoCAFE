@@ -21,21 +21,32 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        System.out.print("Introduce cafe o uni: ");
-        String dsl = in.nextLine();
-        if (dsl.equalsIgnoreCase("cafe")) new Cafe();
-        else if (dsl.equalsIgnoreCase("uni")) new Uni();
-        else System.out.println("Fallo al cargar DSL. Finalizando programa...");
+         System.out.print("Introduce cafe o uni: ");
+         String dsl = in.nextLine();
+         if (dsl.equalsIgnoreCase("cafe")) new Cafe();
+         else if (dsl.equalsIgnoreCase("uni")) new Uni();
+         else System.out.println("Fallo al cargar DSL. Finalizando programa...");
     }
 
     // Método para darle formato al XML al mostrarlo en la consola
     public static void printXmlDocument(Document document) {
-        DOMImplementationLS domImplementationLS = (DOMImplementationLS) document.getImplementation();
-        LSSerializer lsSerializer = domImplementationLS.createLSSerializer();
-        String string = lsSerializer.writeToString(document);
-        System.out.println(string);
+        removeEmptyNodes(document);
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            // initialize StreamResult with File object to save to file
+            StreamResult result = new StreamResult(new StringWriter());
+            DOMSource source = new DOMSource(document);
+            transformer.transform(source, result);
+            String xmlString = result.getWriter().toString();
+            System.out.println(xmlString);
+        } catch (TransformerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    // Método para mostrar todos los XML que haya en un Slot
     public static void printSlot(Slot slot) {
         for (int i = 0; i < slot.getQueue().size(); i++) {
             Document doc = slot.dequeue();
@@ -44,24 +55,10 @@ public class Main {
         }
     }
 
-    public static void xmlDocumentToFile(Document document, String n) {
+    // Método para guardar XML en un archivo
+    public static void xmlDocumentToFile(Document document, String pathArchivo) {
         try {
-            XPathFactory xpathFactory = XPathFactory.newInstance();
-            // XPath to find empty text nodes.
-            XPathExpression xpathExp = null;
-
-            xpathExp = xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
-
-            NodeList emptyTextNodes = null;
-
-            emptyTextNodes = (NodeList) xpathExp.evaluate(document, XPathConstants.NODESET);
-
-
-            // Remove each empty text node from document.
-            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
-                Node emptyTextNode = emptyTextNodes.item(i);
-                emptyTextNode.getParentNode().removeChild(emptyTextNode);
-            }
+            removeEmptyNodes(document);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
@@ -69,12 +66,33 @@ public class Main {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             DOMSource source = new DOMSource(document);
-            FileWriter writer = new FileWriter("Orders/Entregas/entrega"+n+".xml");
+            FileWriter writer = new FileWriter(pathArchivo);
             StreamResult result = new StreamResult(writer);
             transformer.transform(source, result);
-            System.out.println("[entrega"+n+".xml GENERADO CON EXITO]\n");
-        } catch (XPathExpressionException | IOException | TransformerException e) {
+            System.out.println(pathArchivo + " GENERADO CON EXITO]\n");
+        } catch (IOException | TransformerException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void removeEmptyNodes(Document document) {
+        try {
+            XPathFactory xpathFactory = XPathFactory.newInstance();
+
+            XPathExpression xpathExp;
+            xpathExp = xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
+            NodeList emptyTextNodes;
+            emptyTextNodes = (NodeList) xpathExp.evaluate(document, XPathConstants.NODESET);
+
+            // Remove each empty text node from document.
+            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+                Node emptyTextNode = emptyTextNodes.item(i);
+                emptyTextNode.getParentNode().removeChild(emptyTextNode);
+            }
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        }
+        // XPath to find empty text nodes.
+
     }
 }

@@ -16,8 +16,8 @@ import static Main.Main.xmlDocumentToFile;
 
 public class Cafe {
     public Cafe() {
-        Slot splitterInput = new Slot();
-        Slot splitterOutput = new Slot();
+        Slot splitterInput;
+        Slot splitterOutput;
         Slot replicatorOutput1;
         Slot replicatorOutput2;
         Slot translatorOutput;
@@ -25,10 +25,10 @@ public class Cafe {
         Slot correlatorOutput1;
         Slot correlatorOutput2;
         Slot contextEnricherOutput;
-        Slot mergerOutput = new Slot();
-        Slot agreggatorOutput = new Slot();
+        Slot mergerOutput;
+        Slot agreggatorOutput;
 
-        List<Slot> distributorOutputList = new LinkedList<>();
+        List<Slot> distributorOutputList;
         List<Slot> replicatorOutputList;
         List<Slot> correlatorInputList;
         List<Slot> correlatorOutputList;
@@ -74,9 +74,9 @@ public class Cafe {
                     translatorOutput = new Slot();
                     Translator translator = new Translator(replicatorOutputList.get(0), translatorOutput, "//drink/name");
                     if (types.get(i).equals("hot"))
-                        translator.TranslateSQL("Nombre", "dbo.BEBIDAS_CALIENTES", "and stock>0");
+                        translator.TranslateSQL("*", "dbo.BEBIDAS_CALIENTES", "Nombre", "and stock>0");
                     else
-                        translator.TranslateSQL("Nombre", "dbo.BEBIDAS_FRIAS", "and stock>0");
+                        translator.TranslateSQL("*", "dbo.BEBIDAS_FRIAS", "Nombre", "and stock>0");
 
                     // Conector
                     conectorOutput = new Slot();
@@ -117,7 +117,8 @@ public class Cafe {
                 aggregator.Aggregate();
 
                 Document outputDoc = agreggatorOutput.getQueue().element();
-                xmlDocumentToFile(outputDoc, ordersList[n]);
+                String pathArchivo = "Orders/Entregas/entrega"+ordersList[n]+".xml";
+                xmlDocumentToFile(outputDoc, pathArchivo);
             }
         } catch (Exception e) {
             e.printStackTrace();
