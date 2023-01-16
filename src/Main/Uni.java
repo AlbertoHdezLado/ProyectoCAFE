@@ -73,8 +73,8 @@ public class Uni {
                 }
 
                 translatorSQLOutput = new Slot();
-                Translator translatorSQL = new Translator(replicatorOutputList.get(0), translatorSQLOutput, "//alumno/dni");
-                translatorSQL.TranslateSQL("email", "dbo.ALUMNOS", "dni", "");
+                Translator translatorSQL = new Translator(replicatorOutputList.get(0), translatorSQLOutput);
+                translatorSQL.TranslateSQL("email", "dbo.ALUMNOS", "dni", "", "//alumno/dni");
 
                 System.out.println("Despues del translator: ");
                 printSlot(translatorSQLOutput);
@@ -96,8 +96,8 @@ public class Uni {
                 correlatorOutputList.add(correlatorOutput1);
                 correlatorOutputList.add(correlatorOutput2);
 
-                Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
-                correlator.Correlate("replicator_id");
+                Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList, "replicator_id");
+                correlator.Correlate();
 
                 System.out.println("Despues del correlator: ");
                 for (int slot = 0; slot < correlatorOutputList.size(); slot++) {
@@ -113,7 +113,7 @@ public class Uni {
                 printSlot(contextEnricherOutput);
 
                 translatorEmailGatewayOutput = new Slot();
-                Translator translatorEmailGateway = new Translator(contextEnricherOutput, translatorEmailGatewayOutput, "//*");
+                Translator translatorEmailGateway = new Translator(contextEnricherOutput, translatorEmailGatewayOutput);
                 String subject = "Calificaciones ? convocatoria ?.";
                 String[] subjectVariables = {"id_asignatura", "convocatoria"};
                 String content = "El alumno ? ha obtenido una calificación de ? en la convocatoria ? de ?.";

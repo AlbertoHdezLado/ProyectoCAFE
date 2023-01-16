@@ -32,13 +32,11 @@ public class ContextEnricher {
     public void Enrich() {
         while (!inputSlot.getQueue().isEmpty() && !contextSlot.getQueue().isEmpty()) {
             XPath xPath = XPathFactory.newInstance().newXPath();
-            Element element = null;
             // Desencolamos el documento del slot de entrada
             Document inputDocument = inputSlot.dequeue();
             Document contextDocument = contextSlot.dequeue();
             try {
                 // Consulta xPath para extraer una lista de elementos encontrados.
-                NodeList rootNode = (NodeList) xPath.evaluate("/*", inputDocument, XPathConstants.NODESET);
                 NodeList inputNode = (NodeList) xPath.evaluate(xPathExpression, inputDocument, XPathConstants.NODESET);
                 NodeList contextNode = (NodeList) xPath.evaluate("/*", contextDocument, XPathConstants.NODESET);
 
@@ -48,9 +46,6 @@ public class ContextEnricher {
                 // Builder para cargar el documento
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = dbFactory.newDocumentBuilder();
-
-                // Creamos un documento
-                Document enrichedDocument = builder.newDocument();
 
                 for (int contextNodePos = 0; contextNodePos < contextNodeChilds.getLength(); contextNodePos++) {
                     Node node = contextNodeChilds.item(contextNodePos);

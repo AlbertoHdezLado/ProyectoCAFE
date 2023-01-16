@@ -16,21 +16,19 @@ public class Translator {
 
     Slot inputSlot;
     Slot outputSlot;
-    String xPathExpression;
 
-    public Translator(Slot inputSlot, Slot outputSlot, String xPathExpression) {
+    public Translator(Slot inputSlot, Slot outputSlot) {
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
-        this.xPathExpression = xPathExpression;
     }
 
-    public void TranslateSQL(String selection, String table, String variable, String otherConditions) {
+    public void TranslateSQL(String selection, String table, String variable, String otherConditions, String variableNode) {
         XPath xPath = XPathFactory.newInstance().newXPath();
         while (!inputSlot.getQueue().isEmpty()) {
             Document inputDocument = inputSlot.dequeue();
             try {
                 // Consulta xPath para extraer una lista de elementos encontrados.
-                NodeList node = (NodeList) xPath.evaluate(xPathExpression, inputDocument, XPathConstants.NODESET);
+                NodeList node = (NodeList) xPath.evaluate(variableNode, inputDocument, XPathConstants.NODESET);
 
                 String element = node.item(0).getTextContent();
 
@@ -114,7 +112,7 @@ public class Translator {
     private String getNodeTextContent(Document inputDocument, String nodeName) {
         XPath xPath = XPathFactory.newInstance().newXPath();
         try {
-            NodeList nodeList = (NodeList) xPath.evaluate(xPathExpression, inputDocument, XPathConstants.NODESET);
+            NodeList nodeList = (NodeList) xPath.evaluate("//*", inputDocument, XPathConstants.NODESET);
             boolean encontrado = false;
             int i = 0;
             String resultado = "";

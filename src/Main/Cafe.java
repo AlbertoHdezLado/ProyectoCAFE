@@ -74,11 +74,11 @@ public class Cafe {
 
                     // Translator
                     translatorOutput = new Slot();
-                    Translator translator = new Translator(replicatorOutputList.get(0), translatorOutput, "//drink/name");
+                    Translator translator = new Translator(replicatorOutputList.get(0), translatorOutput);
                     if (types.get(i).equals("hot"))
-                        translator.TranslateSQL("*", "dbo.BEBIDAS_CALIENTES", "Nombre", "and stock>0");
+                        translator.TranslateSQL("*", "dbo.BEBIDAS_CALIENTES", "Nombre", "and stock>0", "//drink/name");
                     else
-                        translator.TranslateSQL("*", "dbo.BEBIDAS_FRIAS", "Nombre", "and stock>0");
+                        translator.TranslateSQL("*", "dbo.BEBIDAS_FRIAS", "Nombre", "and stock>0", "//drink/name");
 
                     System.out.println("Despues del translator: ");
                     printSlot(translatorOutput);
@@ -102,8 +102,8 @@ public class Cafe {
                     correlatorOutputList.add(correlatorOutput1);
                     correlatorOutputList.add(correlatorOutput2);
                     // Correlator
-                    Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
-                    correlator.Correlate("replicator_id");
+                    Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList, "replicator_id");
+                    correlator.Correlate();
 
                     System.out.println("Despues del correlator: ");
                     for (int slot = 0; slot < correlatorOutputList.size(); slot++) {

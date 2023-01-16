@@ -22,7 +22,7 @@ public class Splitter { //Comprobado
     Slot outputSlot;
     String xPathExpression;
 
-    public Splitter(Slot input, Slot output, String xPathExpression) { // //drink
+    public Splitter(Slot input, Slot output, String xPathExpression) {
         this.inputSlot = input;
         this.outputSlot = output;
         this.xPathExpression = xPathExpression;

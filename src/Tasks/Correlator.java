@@ -15,13 +15,15 @@ public class Correlator {
 
     List<Slot> inputSlotList;
     List<Slot> outputSlotList;
+    String correlationNode;
 
-    public Correlator(List<Slot> inputSlotList, List<Slot> outputSlotList) {
+    public Correlator(List<Slot> inputSlotList, List<Slot> outputSlotList, String correlationNode) {
         this.inputSlotList = inputSlotList;
         this.outputSlotList = outputSlotList;
+        this.correlationNode = correlationNode;
     }
 
-    public void Correlate(String correlationNode) {
+    public void Correlate() {
         // Mínimo dos entradas
         try {
             boolean found, foundAllSlots = true;
