@@ -5,7 +5,7 @@
         <drink>
             <name>te</name>
             <type>hot</type>
-            <result>false</result>
+            <result>true</result>
         </drink>
         <drink>
             <name>tila</name>
@@ -15,7 +15,7 @@
         <drink>
             <name>coca-cola</name>
             <type>cold</type>
-            <result>false</result>
+            <result>true</result>
         </drink>
         <drink>
             <name>guarana</name>

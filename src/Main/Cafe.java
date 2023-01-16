@@ -34,7 +34,7 @@ public class Cafe {
 
                 Document documento = builder.parse(new File("Orders/order" + ordersList[n] + ".xml"));
                 System.out.println("------------------------------------------------");
-                System.out.println("| CARGANDO ACTA " + n + " DE LA RUTA [Orders/order" + n + ".xml] |");
+                System.out.println("| CARGANDO ORDER " + n + " DE LA RUTA [Orders/order" + n + ".xml] |");
                 System.out.println("------------------------------------------------");
                 System.out.println("XML de entrada: ");
                 printXmlDocument(documento);
@@ -103,7 +103,7 @@ public class Cafe {
                     correlatorOutputList.add(correlatorOutput2);
                     // Correlator
                     Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
-                    correlator.Correlate();
+                    correlator.Correlate("replicator_id");
 
                     System.out.println("Despues del correlator: ");
                     for (int slot = 0; slot < correlatorOutputList.size(); slot++) {

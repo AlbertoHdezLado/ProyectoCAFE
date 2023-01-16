@@ -10,12 +10,12 @@
         <drink>
             <name>tonica</name>
             <type>cold</type>
-            <result>false</result>
+            <result>true</result>
         </drink>
         <drink>
             <name>coca-cola</name>
             <type>cold</type>
-            <result>false</result>
+            <result>true</result>
         </drink>
     </drinks>
 </cafe_order>

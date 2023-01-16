@@ -68,7 +68,7 @@ public class Uni {
 
                 System.out.println("Despues del replicator: ");
                 for (int slot = 0; slot < replicatorOutputList.size(); slot++) {
-                    System.out.println("Salida " + slot + "replicator: ");
+                    System.out.println("Salida " + slot + " replicator: ");
                     printSlot(replicatorOutputList.get(slot));
                 }
 
@@ -97,11 +97,11 @@ public class Uni {
                 correlatorOutputList.add(correlatorOutput2);
 
                 Correlator correlator = new Correlator(correlatorInputList, correlatorOutputList);
-                correlator.Correlate();
+                correlator.Correlate("replicator_id");
 
                 System.out.println("Despues del correlator: ");
                 for (int slot = 0; slot < correlatorOutputList.size(); slot++) {
-                    System.out.println("Salida " + slot + "correlator: ");
+                    System.out.println("Salida " + slot + " correlator: ");
                     printSlot(correlatorOutputList.get(slot));
                 }
 

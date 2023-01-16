@@ -21,7 +21,7 @@ public class Correlator {
         this.outputSlotList = outputSlotList;
     }
 
-    public void Correlate() {
+    public void Correlate(String correlationNode) {
         // Mínimo dos entradas
         try {
             boolean found, foundAllSlots = true;
@@ -29,7 +29,7 @@ public class Correlator {
             XPath xPath = XPathFactory.newInstance().newXPath();
             while (i < inputSlotList.get(0).getQueue().size()) {
                 Document inputDocument = inputSlotList.get(0).dequeue();
-                NodeList replicatorIDNode = (NodeList) xPath.evaluate("//replicator_id", inputDocument, XPathConstants.NODESET);
+                NodeList replicatorIDNode = (NodeList) xPath.evaluate("//"+correlationNode, inputDocument, XPathConstants.NODESET);
                 String replicatorID = replicatorIDNode.item(0).getTextContent();
                 int j = 1;
                 // Comprobamos si todos los slot de entrada tienen un documento con el replicator id
@@ -38,7 +38,7 @@ public class Correlator {
                     found = false;
                     while (documentPos < inputSlotList.get(j).getQueue().size() && !found) {
                         Document comparedDocument = inputSlotList.get(j).dequeue();
-                        NodeList comparedIDNode = (NodeList) xPath.evaluate("//replicator_id", comparedDocument, XPathConstants.NODESET);
+                        NodeList comparedIDNode = (NodeList) xPath.evaluate("//"+correlationNode, comparedDocument, XPathConstants.NODESET);
                         String comparedID = comparedIDNode.item(0).getTextContent();
                         if (replicatorID.equals(comparedID))
                             found = true;
@@ -68,7 +68,7 @@ public class Correlator {
                         // Buscamos el documento del slot que queremos llevar a la salida (por replicator_id)
                         while (!found && l < inputSlotList.get(k).getQueue().size() ) {
                             Document aux = inputSlotList.get(k).dequeue();
-                            NodeList auxIDNode = (NodeList) xPath.evaluate("//replicator_id", aux, XPathConstants.NODESET);
+                            NodeList auxIDNode = (NodeList) xPath.evaluate("//" + correlationNode, aux, XPathConstants.NODESET);
                             String auxID = auxIDNode.item(0).getTextContent();
 
                             // Si hemos encontrado el documento
