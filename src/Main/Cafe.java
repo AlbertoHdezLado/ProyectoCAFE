@@ -141,6 +141,8 @@ public class Cafe {
                 String pathArchivo = "Orders/Entregas/entrega"+ordersList[n]+".xml";
                 xmlDocumentToFile(outputDoc, pathArchivo);
             }
+            System.out.println();
+            System.out.println("SE HAN GENERADO " + ordersList.length + " ARCHIVOS.");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,7 +5,7 @@
         <drink>
             <name>cafe</name>
             <type>hot</type>
-            <result>false</result>
+            <result>true</result>
         </drink>
         <drink>
             <name>te</name>

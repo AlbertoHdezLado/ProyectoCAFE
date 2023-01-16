@@ -127,6 +127,8 @@ public class Uni {
                 String pathArchivo = "Actas/Resultados/resultado" + actasList[n] + ".xml";
                 xmlDocumentToFile(outputDoc, pathArchivo);
             }
+            System.out.println();
+            System.out.println("SE HAN GENERADO " + actasList.length + " ARCHIVOS.");
         } catch (Exception e) {
             e.printStackTrace();
         }
